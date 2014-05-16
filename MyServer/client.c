@@ -7,10 +7,23 @@
 
 #define MAXLINE 4098
 
+void str_cli(FILE *fp, int sockfd)
+{
+  char sendline[MAXLINE], recvline[MAXLINE];
+  while (fgets(sendline, MAXLINE, fp) != NULL) {
+    write(sockfd, sendline, strlen(sendline));
+    if (read(sockfd, recvline, MAXLINE) == 0) {
+      printf("str_cli: server terminated prematurely");
+      exit(0);
+    }
+    fputs(recvline, stdout);
+  }
+}
+
 int main(int argc, char **argv)
 {
   int sockfd, n;
-  char recvline[MAXLINE + 1];
+//  char recvline[MAXLINE + 1];
   struct sockaddr_in servaddr;
 
   if (argc != 2) {
@@ -38,7 +51,7 @@ int main(int argc, char **argv)
   }
   
   //read include in <unistd.h>
-  while ((n = read(sockfd, recvline, MAXLINE)) > 0) {
+/*  while ((n = read(sockfd, recvline, MAXLINE)) > 0) {
     recvline[n] = 0;
     if (fputs(recvline, stdout) == EOF) {
       printf("fputs error\n");
@@ -49,6 +62,8 @@ int main(int argc, char **argv)
     printf("read error\n");
     return -1;
   }
+*/
+  str_cli(stdin, sockfd);
 
   //include in <stdlib.h>
   exit(0);
