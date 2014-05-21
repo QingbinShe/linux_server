@@ -10,6 +10,7 @@
 
 #define MAXLINE 4098
 #define LISTENQ 1024
+#define SERV_PORT 9877
 
 void str_echo(int sockfd)
 {
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
   bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  servaddr.sin_port = htons(13);
+  servaddr.sin_port = htons(SERV_PORT);
 
   //include in <sys/socket.h>
   if (bind(listenfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
       return -1;
     }
 
+    printf("connect from port %d\n", ntohs(cliaddr.sin_port));
     //inet_ntop include in <arpa/inet.h>
 /*    if (inet_ntop(AF_INET, &cliaddr.sin_addr, buff, sizeof(buff)) == NULL)
       exit(0);
