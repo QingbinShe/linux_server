@@ -6,7 +6,8 @@
 #include<stdlib.h>
 
 #define MAXLINE 4098
-#define SERV_PORT 9877
+#define SERV_PORT 9877     //which port the client want to connect
+#define MAX_LINKE 5        //maximun link the client will create
 
 void str_cli(FILE *fp, int sockfd)
 {
@@ -23,7 +24,7 @@ void str_cli(FILE *fp, int sockfd)
 
 int main(int argc, char **argv)
 {
-  int sockfd, n;
+  int sockfd[MAX_LINKE], n;
 //  char recvline[MAXLINE + 1];
   struct sockaddr_in servaddr;
 
@@ -31,7 +32,10 @@ int main(int argc, char **argv)
     printf("usage: <IPaddress>\n");
     return -1;
   }
-  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+
+int i;
+for (i = 0; i < MAX_LINKE; i++) {
+  if ((sockfd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     printf("socket error\n");
     return -1;
   }
@@ -46,7 +50,7 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  if (connect(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
+  if (connect(sockfd[i], (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
     printf("connect error\n");
     return -1;
   }
@@ -64,7 +68,8 @@ int main(int argc, char **argv)
     return -1;
   }
 */
-  str_cli(stdin, sockfd);
+}
+  str_cli(stdin, sockfd[0]);
 
   //include in <stdlib.h>
   exit(0);
