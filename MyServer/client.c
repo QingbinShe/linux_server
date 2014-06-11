@@ -4,21 +4,52 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<sys/time.h>
+#include<sys/select.h>
 
 #define MAXLINE 4098
 #define SERV_PORT 9877     //which port the client want to connect
-#define MAX_LINKE 5        //maximun link the client will create
+#define MAX_LINKE 1        //maximun link the client will create
 
 void str_cli(FILE *fp, int sockfd)
 {
   char sendline[MAXLINE], recvline[MAXLINE];
+/*
   while (fgets(sendline, MAXLINE, fp) != NULL) {
     write(sockfd, sendline, strlen(sendline));
     if (read(sockfd, recvline, MAXLINE) == 0) {
-      printf("str_cli: server terminated prematurely");
+      printf("str_cli: server terminated prematurely\n");
       exit(0);
     }
     fputs(recvline, stdout);
+  }
+*/
+  //use select()
+  int maxfdp1;
+  fd_set rset;
+  for (;;) {
+    //for fget()
+    FD_SET(fileno(fp), &rset);
+    //fot socket
+    FD_SET(sockfd, &rset);
+    maxfdp1 = (fileno(fp) > sockfd? fileno(fp):sockfd) + 1;
+    select(maxfdp1, &rset, NULL, NULL, NULL);
+
+    //socket is readable
+    if (FD_ISSET(sockfd, &rset)) {
+      if (read(sockfd, recvline, MAXLINE) == 0) {
+        printf("str_cli: server terminated prematurely\n");
+        exit(0);
+      }
+      fputs(recvline, stdout);
+    }
+    //input is readable
+    if (FD_ISSET(fileno(fp), &rset)) {
+      if (fgets(sendline, MAXLINE, fp) == NULL) {
+        return;
+      }
+      write(sockfd, sendline, MAXLINE);
+    }
   }
 }
 
