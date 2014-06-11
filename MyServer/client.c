@@ -47,7 +47,9 @@ void str_cli(FILE *fp, int sockfd)
     //input is readable
     if (FD_ISSET(fileno(fp), &rset)) {
       if (fgets(sendline, MAXLINE, fp) == NULL) {
-        return;
+        shutdown(sockfd, SHUT_WR);
+        FD_CLR(fileno(fp), &rset);
+        continue;
       }
       write(sockfd, sendline, MAXLINE);
     }
