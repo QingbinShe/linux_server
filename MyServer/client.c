@@ -27,6 +27,7 @@ void str_cli(FILE *fp, int sockfd)
   //use select()
   int maxfdp1;
   fd_set rset;
+  FD_ZERO(&rset);
   for (;;) {
     //for fget()
     FD_SET(fileno(fp), &rset);
