@@ -18,6 +18,13 @@ void dg_cli(FILE *fp, int sockfd, struct sockaddr *pservaddr, socklen_t servlen)
 
   preply_addr = malloc(servlen);
 
+  //in fact, if use connect, it can use write and read to replace sendto and recvfrom
+/*
+  if (connect(sockfd, (struct sockaddr*) pservaddr, servlen) < 0 ) {
+    printf("connect error\n");
+    return;
+  }
+*/
   while(fgets(sendline, MAXLINE, fp) != NULL) {
     sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
     
