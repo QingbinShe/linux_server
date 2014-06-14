@@ -17,7 +17,7 @@ void dg_cli(FILE *fp, int sockfd, struct sockaddr *pservaddr, socklen_t servlen)
   while(fgets(sendline, MAXLINE, fp) != NULL) {
     sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
     n = recvfrom(sockfd, recvline, MAXLINE, 0, NULL, NULL);
-    recvline[0] = 0;
+    recvline[n] = 0;
     fputs(recvline, stdout);
   }
 }
