@@ -13,10 +13,22 @@ void dg_cli(FILE *fp, int sockfd, struct sockaddr *pservaddr, socklen_t servlen)
 {
   int n;
   char sendline[MAXLINE], recvline[MAXLINE];
+  socklen_t len;
+  struct sockaddr *preply_addr;
+
+  preply_addr = malloc(servlen);
 
   while(fgets(sendline, MAXLINE, fp) != NULL) {
     sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
-    n = recvfrom(sockfd, recvline, MAXLINE, 0, NULL, NULL);
+    
+    len = servlen;
+    n = recvfrom(sockfd, recvline, MAXLINE, 0, preply_addr, &len);
+    //to check if the packet is replied to this client
+    if (len != servlen || memcmp(pservaddr, preply_addr, len) != 0) {
+      //printf("reply from %s (ignore)\n", inet_ntop(...........));
+      continue;
+    }
+
     recvline[n] = 0;
     fputs(recvline, stdout);
   }

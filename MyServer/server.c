@@ -125,6 +125,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    //select the tcp
     if (FD_ISSET(listenfd, &rset)) {
       len = sizeof(cliaddr);
       if (connfd = accept(listenfd, (struct sockaddr*) &cliaddr, &len) < 0) {
@@ -162,6 +163,7 @@ int main(int argc, char **argv)
       close(connfd);
     }
 
+    //select the udp
     if (FD_ISSET(udpfd, &rset)) {
       len = sizeof(cliaddr);
       n = recvfrom(udpfd, mesg, MAXLINE, 0, (struct sockaddr*) &cliaddr, &len);
